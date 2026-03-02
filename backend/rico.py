@@ -4,7 +4,7 @@ finch = Finch('A')
 #finch.setMove('F', 10, 100)
 #finch.setTurn('R', 360, 30)
 def main(): 
-    roomba()
+    makeSaints()
 
 def roomba():
     distance = 0 
@@ -84,7 +84,111 @@ def makeMary():
     finch.playNote(62, 0.45)
     time.sleep(0.5)
     finch.playNote(60, 0.75)
+    
+def makeSaints():
+    
+    # Phrase 1
+    finch.playNote(60, 0.55)
+    time.sleep(0.5)
 
+    finch.playNote(64, 0.55)
+    time.sleep(0.5)
+
+    finch.playNote(65, 0.55)
+    time.sleep(0.5)
+
+    finch.playNote(67, 0.55)
+    time.sleep(.70)
+
+    finch.playNote(60, 0.55)
+    time.sleep(0.5)
+
+    finch.playNote(64, 0.55)
+    time.sleep(0.5)
+
+    finch.playNote(65, 0.55)
+    time.sleep(0.5)
+
+    finch.playNote(67, 0.55)
+    time.sleep(0.70)
+
+
+    # Phrase 2
+    finch.playNote(60, 0.55)
+    time.sleep(0.5)
+
+    finch.playNote(64, 0.55)
+    time.sleep(0.5)
+
+    finch.playNote(65, 0.55)
+    time.sleep(0.5)
+
+    finch.playNote(67, 0.55)
+    time.sleep(0.5)
+
+    finch.playNote(64, 0.55)
+    time.sleep(0.5)
+
+    finch.playNote(60, 0.55)
+    time.sleep(0.5)
+
+    finch.playNote(64, 0.55)
+    time.sleep(0.5)
+
+    finch.playNote(62, 0.65)
+    time.sleep(0.5)
+
+
+    '''# Phrase 3
+    finch.playNote(60, 0.45)
+    time.sleep(0.5)
+
+    finch.playNote(64, 0.45)
+    time.sleep(0.5)
+
+    finch.playNote(65, 0.45)
+    time.sleep(0.5)
+
+    finch.playNote(67, 0.45)
+    time.sleep(0.5)
+
+    finch.playNote(72, 0.45)
+    time.sleep(0.5)
+
+    finch.playNote(64, 0.45)
+    time.sleep(0.5)
+
+    finch.playNote(65, 0.45)
+    time.sleep(0.5)
+
+    finch.playNote(67, 0.45)
+    time.sleep(0.5)
+
+
+    # Phrase 4
+    finch.playNote(69, 0.45)
+    time.sleep(0.5)
+
+    finch.playNote(67, 0.45)
+    time.sleep(0.5)
+
+    finch.playNote(65, 0.45)
+    time.sleep(0.5)
+
+    finch.playNote(64, 0.45)
+    time.sleep(0.5)
+
+    finch.playNote(60, 0.45)
+    time.sleep(0.5)
+
+    finch.playNote(67, 0.45)
+    time.sleep(0.5)
+
+    finch.playNote(64, 0.45)
+    time.sleep(0.5)
+
+    finch.playNote(60, 0.45)
+    time.sleep(0.5)'''
 main()
 #makeMary()
 #makeSquare(25)
