@@ -1,10 +1,37 @@
 from lib.BirdBrain import Finch
 import time
+import keyboard
 finch = Finch('A')
 #finch.setMove('F', 10, 100)
 #finch.setTurn('R', 360, 30)
 def main(): 
-    roomba()
+    # roomba()
+    move() 
+def move() : 
+
+    control = False
+    togPres = False
+    while True : 
+
+     if keyboard.is_pressed("space") and not togPres :
+            control = not control
+            togPres = True
+            if not control : 
+                finch.setMotors(0,0) 
+     if not keyboard.is_pressed("space") : 
+        if control : 
+            if keyboard.is_pressed("w") : #move forward
+                finch.setMotors(50,50)
+            elif keyboard.is_pressed("s") : #back 
+                finch.setMotors(-50,-50) 
+            elif keyboard.is_pressed("a") : #left
+                finch.setMotors(-30,30)
+            elif keyboard.is_pressed("d"): 
+                finch.setMotors(30,-30) # right
+        else : 
+            finch.setMotors(0,0)
+        
+        time.sleep(0.05)
 
 def roomba():
     distance = 0 
