@@ -88,107 +88,110 @@ def makeMary():
 def makeSaints():
     
     # Phrase 1
-    finch.playNote(60, 0.55)
+    finch.playNote(60, 0.50)
     time.sleep(0.5)
 
-    finch.playNote(64, 0.55)
+    finch.playNote(64, 0.50)
     time.sleep(0.5)
 
-    finch.playNote(65, 0.55)
+    finch.playNote(65, 0.50)
     time.sleep(0.5)
 
-    finch.playNote(67, 0.55)
-    time.sleep(.70)
+    finch.playNote(67, .8)
+    time.sleep(1)
 
-    finch.playNote(60, 0.55)
+    finch.playNote(60, 0.50)
     time.sleep(0.5)
 
-    finch.playNote(64, 0.55)
+    finch.playNote(64, 0.50)
     time.sleep(0.5)
 
-    finch.playNote(65, 0.55)
+    finch.playNote(65, 0.50)
     time.sleep(0.5)
 
-    finch.playNote(67, 0.55)
-    time.sleep(0.70)
+    finch.playNote(67, 0.80)
+    time.sleep(1)
 
-
+    
     # Phrase 2
-    finch.playNote(60, 0.55)
+    finch.playNote(60, 0.50)
     time.sleep(0.5)
 
-    finch.playNote(64, 0.55)
+    finch.playNote(64, 0.50)
     time.sleep(0.5)
 
-    finch.playNote(65, 0.55)
+    finch.playNote(65, 0.50)
     time.sleep(0.5)
 
-    finch.playNote(67, 0.55)
+    finch.playNote(67, 0.8)
+    time.sleep(1)
+
+    finch.playNote(64, 0.8)
+    time.sleep(1)
+
+    finch.playNote(60, 0.8)
+    time.sleep(1)
+
+    finch.playNote(64, 0.8)
+    time.sleep(1)
+
+    finch.playNote(62, 0.8)
+    time.sleep(1.5)
+
+    
+    # Phrase 3
+    finch.playNote(64, 0.5)
+    time.sleep(0.6)
+
+    finch.playNote(64, 0.5)
     time.sleep(0.5)
 
-    finch.playNote(64, 0.55)
+    finch.playNote(62, 0.5)
     time.sleep(0.5)
 
-    finch.playNote(60, 0.55)
+    finch.playNote(60, .8)
+    time.sleep(1)
+
+    finch.playNote(60, 0.5)
     time.sleep(0.5)
 
-    finch.playNote(64, 0.55)
+    finch.playNote(64, 0.8)
+    time.sleep(1)
+
+    finch.playNote(67, 0.5)
+    time.sleep(0.6)
+
+    finch.playNote(67, 0.5)
     time.sleep(0.5)
+    
+    finch.playNote(65, 0.8)
+    time.sleep(1)
 
-    finch.playNote(62, 0.65)
-    time.sleep(0.5)
-
-
-    '''# Phrase 3
-    finch.playNote(60, 0.45)
-    time.sleep(0.5)
-
-    finch.playNote(64, 0.45)
-    time.sleep(0.5)
-
-    finch.playNote(65, 0.45)
-    time.sleep(0.5)
-
-    finch.playNote(67, 0.45)
-    time.sleep(0.5)
-
-    finch.playNote(72, 0.45)
-    time.sleep(0.5)
-
-    finch.playNote(64, 0.45)
-    time.sleep(0.5)
-
-    finch.playNote(65, 0.45)
-    time.sleep(0.5)
-
-    finch.playNote(67, 0.45)
-    time.sleep(0.5)
-
-
+    
     # Phrase 4
-    finch.playNote(69, 0.45)
+    finch.playNote(60, 0.5)
     time.sleep(0.5)
 
-    finch.playNote(67, 0.45)
+    finch.playNote(64, 0.5)
     time.sleep(0.5)
 
-    finch.playNote(65, 0.45)
+    finch.playNote(65, 0.5)
     time.sleep(0.5)
 
-    finch.playNote(64, 0.45)
-    time.sleep(0.5)
+    finch.playNote(67, 0.8)
+    time.sleep(1)
 
-    finch.playNote(60, 0.45)
-    time.sleep(0.5)
+    finch.playNote(64, 0.8)
+    time.sleep(1)
 
-    finch.playNote(67, 0.45)
-    time.sleep(0.5)
+    finch.playNote(60, 0.8)
+    time.sleep(1)
 
-    finch.playNote(64, 0.45)
-    time.sleep(0.5)
+    finch.playNote(62, 0.8)
+    time.sleep(1)
 
-    finch.playNote(60, 0.45)
-    time.sleep(0.5)'''
+    finch.playNote(60, 1)
+    time.sleep(1)
 main()
 #makeMary()
 #makeSquare(25)
