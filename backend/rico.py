@@ -4,7 +4,7 @@ finch = Finch('A')
 #finch.setMove('F', 10, 100)
 #finch.setTurn('R', 360, 30)
 def main(): 
-    makeSaints()
+    singStar()
 
 def roomba():
     distance = 0 
@@ -32,7 +32,7 @@ def makeHex(length):
         finch.setMove('F', length, 75)
         finch.setTurn('R', 65, 75)
         i+=1
-def makeMary():
+def singMary():
     finch.playNote(64, 0.45)
     time.sleep(0.5)
     finch.playNote(62, 0.45)
@@ -85,7 +85,7 @@ def makeMary():
     time.sleep(0.5)
     finch.playNote(60, 0.75)
     
-def makeSaints():
+def singSaints():
     
     # Phrase 1
     finch.playNote(60, 0.50)
@@ -189,6 +189,133 @@ def makeSaints():
 
     finch.playNote(62, 0.8)
     time.sleep(1)
+
+    finch.playNote(60, 1)
+    time.sleep(1)
+
+def singStar():
+    finch.playNote(60, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(60, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(67, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(67, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(69, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(69, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(67, 0.8)
+    time.sleep(1)
+
+    finch.playNote(65, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(65, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(64, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(64, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(62, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(62, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(60, 0.8)
+    time.sleep(1)
+
+    finch.playNote(67, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(67, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(65, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(65, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(64, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(64, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(62, 0.8)
+    time.sleep(1)
+
+    finch.playNote(67, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(67, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(65, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(65, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(64, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(64, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(62, 0.8)
+    time.sleep(1)
+
+    finch.playNote(60, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(60, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(67, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(67, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(69, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(69, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(67, 0.8)
+    time.sleep(1)
+
+    finch.playNote(65, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(65, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(64, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(64, 0.5)
+    time.sleep(.5)
+
+    finch.playNote(62, 0.5)
+    time.sleep(.6)
+
+    finch.playNote(62, 0.5)
+    time.sleep(.5)
 
     finch.playNote(60, 1)
     time.sleep(1)
