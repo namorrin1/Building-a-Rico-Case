@@ -9,13 +9,7 @@ finch = Finch('A')
 
 def main():
     print("Hello. Welcome to the Rico Case: \n")
-    #roomba()
-    #drawMode('hexagon', 10)
-    #roomba('go')
-    coreLoop()
-
-    
-    
+    coreLoop() 
 
 def coreLoop():
     toggle = True
@@ -28,12 +22,15 @@ def coreLoop():
         "Press 'E' to activate Song Mode \n" \
         "Press 'Q' to quit\n")
         toggle = switch(choice.upper())
-
 def switch(choice):
     match choice: 
         case 'A':
-            print("Welcome to Manual Control Mode \n")
-            #manual code goes here
+            print("Welcome to Manual Control Mode \n" \
+            "Click 'W' to move forward \n" \
+            "Click 'A' to turn left \n" \
+            "Click 'S' to move backward \n" \
+            "Click 'D' to turn right \n")
+            move()
             return True
         case 'B':
             print("Welcome to Write Mode \n")
@@ -75,8 +72,7 @@ def switch(choice):
             return False
         case _:
             print("Not a valid choice! Please Enter a Letter from A -> E")
-            return True
-        
+            return True  
 def drawMode(drawInput, drawLength):
     if drawInput.upper() == 'SQUARE':
         makeSquare(drawLength)
@@ -84,7 +80,6 @@ def drawMode(drawInput, drawLength):
         makeHex(drawLength)
     elif drawInput.upper() == 'STAR':
         makeStar(drawLength)
-
 def songMode(songChoice):
     if songChoice.upper() == 'MARY':
         singMary()
@@ -93,35 +88,56 @@ def songMode(songChoice):
     elif songChoice.upper() == 'TWINKLE':
         singTwinkle()
 
-
 def move() : 
+    #this is so that the keys pressed for movement control do not echo in the cmd line after exiting
+    keyboard.block_key('w')
+    keyboard.block_key('a')
+    keyboard.block_key('s')
+    keyboard.block_key('d')
+    keyboard.block_key('space')
+    keyboard.block_key('q')
 
-    control = False # a state to hold whether or not controls are on or off
+    control = True # a state to hold whether or not controls are on or off
     togPres = False # a state to determine whether or not the toggle has been pressed(will be space)
-    while True : 
-     if keyboard.is_pressed("space") and not togPres :
-            control = not control #control is off
-            togPres = True #toggle was pressed
-            if not control : 
-                finch.setMotors(0,0) #if control is off then finch should not move
-     if not keyboard.is_pressed("space") : 
-        togPres = False 
-        if control : 
-            if keyboard.is_pressed("w") : #move forward
-                finch.setMotors(50,50)
-            elif keyboard.is_pressed("s") : #back 
-                finch.setMotors(-50,-50) 
-            elif keyboard.is_pressed("a") : #left
-                finch.setMotors(-30,30)
-            elif keyboard.is_pressed("d"): 
-                finch.setMotors(30,-30) # right
-        else : 
-            finch.setMotors(0,0) # stops if no input is being handled
-        
-        time.sleep(0.05) # use sleep to not overload bot.
+    try:    
+        while True :
+            if keyboard.is_pressed("q"):
+                finch.setMotors(0,0)
+                print("Exiting Manual Movement Control")
+                break 
+            if keyboard.is_pressed("space") and not togPres :
+                    control = not control #control is off
+                    togPres = True #toggle was pressed
+                    if not control : 
+                        finch.setMotors(0,0) #if control is off then finch should not move
+            if not keyboard.is_pressed("space") : 
+                togPres = False 
+                if control : 
+                    if keyboard.is_pressed("w") : #move forward 
+                        finch.setMotors(0,0)
+                        time.sleep(0.10)   
+                        finch.setMotors(25,25)
+                    elif keyboard.is_pressed("s") : #back
+                        finch.setMotors(0,0)
+                        time.sleep(0.10)
+                        finch.setMotors(-25,-25) 
+                    elif keyboard.is_pressed("a") : #left
+                        finch.setMotors(-30,30)
+                    elif keyboard.is_pressed("d"): 
+                        finch.setMotors(30,-30) # right
+                else : 
+                    finch.setMotors(0,0) # stops if no input is being handled
+                
+            time.sleep(0.05) # use sleep to not overload bot.
+    finally:    #unblocks the keys after blocking them so they dont echo in the cmd line. 
+        for key in ['w', 'a', 's', 'd', 'space', 'q']:
+            try:
+                keyboard.unblock_key(key)
+            except:
+                pass
+        finch.setMotors(0,0)
+        finch.stop()
 #rafbranch ^ 
-
-
 def roomba():
     status = {'active' : True}
     def drive():
@@ -147,30 +163,6 @@ def roomba():
             break
     mover.join()
     print("Roomba Mode Ended")
-'''
-def roomba(userRoombaToggle):
-    if userRoombaToggle.upper() == 'GO':
-        roombaToggle = True
-    elif userRoombaToggle.upper() == 'STOP':
-        roombaToggle = False
-    print("Enter command here:")
-    while(roombaToggle):
-        innerRoombaInput = input()
-        if innerRoombaInput.upper() == 'STOP':
-            roombaToggle = False
-        distance = finch.getDistance()
-        print("distance: ", distance)
-        while(distance > 15):
-            finch.setMove('F', 15, 50)
-            distance = finch.getDistance()
-            print("distance: ", distance)
-        finch.setTurn('L', 90, 75)
-        distance = finch.getDistance()
-        
-            #finch.setTurn('L', 90, 75)
-       
-            #finch.setMove('F', 50, 50)
-'''
 def write(userStr):
     #str = "Hello World"
     if (len(userStr) > 15):
@@ -185,12 +177,11 @@ def makeSquare(length):
         finch.setMove('F',length, 75)
         finch.setTurn('R', 90, 75)
         i +=1
-
 def makeStar(length):
     i = 0
     while (i < 5):  
         finch.setMove('F', length, 75)
-        finch.setTurn('R',135, 75)
+        finch.setTurn('R',144, 75)
         i+=1
 def makeHex(length):
     i = 0
@@ -249,240 +240,161 @@ def singMary():
     time.sleep(0.5)
     finch.playNote(62, 0.45)
     time.sleep(0.5)
-    finch.playNote(60, 0.75)
-    
-def singSaints():
-    
+    finch.playNote(60, 0.75)  
+def singSaints():   
     # Phrase 1
     finch.playNote(60, 0.50)
     time.sleep(0.5)
-
     finch.playNote(64, 0.50)
     time.sleep(0.5)
-
     finch.playNote(65, 0.50)
     time.sleep(0.5)
-
     finch.playNote(67, .8)
     time.sleep(1)
-
     finch.playNote(60, 0.50)
     time.sleep(0.5)
-
     finch.playNote(64, 0.50)
     time.sleep(0.5)
-
     finch.playNote(65, 0.50)
     time.sleep(0.5)
-
     finch.playNote(67, 0.80)
     time.sleep(1)
-
-    
     # Phrase 2
     finch.playNote(60, 0.50)
     time.sleep(0.5)
-
     finch.playNote(64, 0.50)
     time.sleep(0.5)
-
     finch.playNote(65, 0.50)
     time.sleep(0.5)
-
     finch.playNote(67, 0.8)
     time.sleep(1)
-
     finch.playNote(64, 0.8)
     time.sleep(1)
-
     finch.playNote(60, 0.8)
     time.sleep(1)
-
     finch.playNote(64, 0.8)
     time.sleep(1)
-
     finch.playNote(62, 0.8)
     time.sleep(1.5)
-
-    
     # Phrase 3
     finch.playNote(64, 0.5)
     time.sleep(0.6)
-
     finch.playNote(64, 0.5)
     time.sleep(0.5)
-
     finch.playNote(62, 0.5)
     time.sleep(0.5)
-
     finch.playNote(60, .8)
     time.sleep(1)
-
     finch.playNote(60, 0.5)
     time.sleep(0.5)
-
     finch.playNote(64, 0.8)
     time.sleep(1)
-
     finch.playNote(67, 0.5)
     time.sleep(0.6)
-
     finch.playNote(67, 0.5)
     time.sleep(0.5)
-    
     finch.playNote(65, 0.8)
     time.sleep(1)
-
-    
     # Phrase 4
     finch.playNote(60, 0.5)
     time.sleep(0.5)
-
     finch.playNote(64, 0.5)
     time.sleep(0.5)
-
     finch.playNote(65, 0.5)
     time.sleep(0.5)
-
     finch.playNote(67, 0.8)
     time.sleep(1)
-
     finch.playNote(64, 0.8)
     time.sleep(1)
-
     finch.playNote(60, 0.8)
     time.sleep(1)
-
     finch.playNote(62, 0.8)
     time.sleep(1)
-
     finch.playNote(60, 1)
     time.sleep(1)
-
 def singTwinkle():
     finch.playNote(60, 0.5)
     time.sleep(.6)
-
     finch.playNote(60, 0.5)
     time.sleep(.5)
-
     finch.playNote(67, 0.5)
     time.sleep(.6)
-
     finch.playNote(67, 0.5)
     time.sleep(.5)
-
     finch.playNote(69, 0.5)
     time.sleep(.6)
-
     finch.playNote(69, 0.5)
     time.sleep(.5)
-
     finch.playNote(67, 0.8)
     time.sleep(1)
-
     finch.playNote(65, 0.5)
     time.sleep(.6)
-
     finch.playNote(65, 0.5)
     time.sleep(.5)
-
     finch.playNote(64, 0.5)
     time.sleep(.6)
-
     finch.playNote(64, 0.5)
     time.sleep(.5)
-
     finch.playNote(62, 0.5)
     time.sleep(.6)
-
     finch.playNote(62, 0.5)
     time.sleep(.5)
-
     finch.playNote(60, 0.8)
     time.sleep(1)
-
     finch.playNote(67, 0.5)
     time.sleep(.6)
-
     finch.playNote(67, 0.5)
     time.sleep(.5)
-
     finch.playNote(65, 0.5)
     time.sleep(.6)
-
     finch.playNote(65, 0.5)
     time.sleep(.5)
-
     finch.playNote(64, 0.5)
     time.sleep(.6)
-
     finch.playNote(64, 0.5)
     time.sleep(.5)
-
     finch.playNote(62, 0.8)
     time.sleep(1)
-
     finch.playNote(67, 0.5)
     time.sleep(.6)
-
     finch.playNote(67, 0.5)
     time.sleep(.5)
-
     finch.playNote(65, 0.5)
     time.sleep(.6)
-
     finch.playNote(65, 0.5)
     time.sleep(.5)
-
     finch.playNote(64, 0.5)
     time.sleep(.6)
-
     finch.playNote(64, 0.5)
     time.sleep(.5)
-
     finch.playNote(62, 0.8)
     time.sleep(1)
-
     finch.playNote(60, 0.5)
     time.sleep(.6)
-
     finch.playNote(60, 0.5)
     time.sleep(.5)
-
     finch.playNote(67, 0.5)
     time.sleep(.6)
-
     finch.playNote(67, 0.5)
     time.sleep(.5)
-
     finch.playNote(69, 0.5)
     time.sleep(.6)
-
     finch.playNote(69, 0.5)
     time.sleep(.5)
-
     finch.playNote(67, 0.8)
     time.sleep(1)
-
     finch.playNote(65, 0.5)
     time.sleep(.6)
-
     finch.playNote(65, 0.5)
     time.sleep(.5)
-
     finch.playNote(64, 0.5)
     time.sleep(.6)
-
     finch.playNote(64, 0.5)
     time.sleep(.5)
-
     finch.playNote(62, 0.5)
     time.sleep(.6)
-
     finch.playNote(62, 0.5)
     time.sleep(.5)
-
     finch.playNote(60, 1)
     time.sleep(1)
 
