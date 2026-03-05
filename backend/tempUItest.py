@@ -1,3 +1,4 @@
+'''
 def main():
     print("Hello Welcome to the Rico Case: \n")
     coreLoop()
@@ -77,3 +78,4 @@ def songMode(songChoice):
     
 
 main()
+'''
