@@ -1,10 +1,12 @@
 from lib.BirdBrain import Finch
-#import keyboard
+import keyboard
 import threading 
 import time
+import keyboard
 finch = Finch('A')
 #finch.setMove('F', 10, 100)
 #finch.setTurn('R', 360, 30)
+
 def main():
     print("Hello. Welcome to the Rico Case: \n")
     #roomba()
@@ -91,6 +93,33 @@ def songMode(songChoice):
     elif songChoice.upper() == 'TWINKLE':
         makeTwinkle()
 
+
+def move() : 
+
+    control = False # a state to hold whether or not controls are on or off
+    togPres = False # a state to determine whether or not the toggle has been pressed(will be space)
+    while True : 
+     if keyboard.is_pressed("space") and not togPres :
+            control = not control #control is off
+            togPres = True #toggle was pressed
+            if not control : 
+                finch.setMotors(0,0) #if control is off then finch should not move
+     if not keyboard.is_pressed("space") : 
+        togPres = False 
+        if control : 
+            if keyboard.is_pressed("w") : #move forward
+                finch.setMotors(50,50)
+            elif keyboard.is_pressed("s") : #back 
+                finch.setMotors(-50,-50) 
+            elif keyboard.is_pressed("a") : #left
+                finch.setMotors(-30,30)
+            elif keyboard.is_pressed("d"): 
+                finch.setMotors(30,-30) # right
+        else : 
+            finch.setMotors(0,0) # stops if no input is being handled
+        
+        time.sleep(0.05) # use sleep to not overload bot.
+#rafbranch ^ 
 
 def roomba():
     status = {'active' : True}
