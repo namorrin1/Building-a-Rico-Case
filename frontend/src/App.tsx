@@ -1,40 +1,53 @@
-import { useState } from 'react'
-import './App.css'
+import { useState } from 'react';
+import { io } from 'socket.io-client';
+import './App.css';
+
+const TOTALLY_SECURE_KEY: string = 'meow';
+const PORT: number = 5555;
+const URL: string = 'http://localhost:' + String(PORT);
 
 function App() {
-    const [status, setStatus] = useState('Waiting')
 
-    const connect = async (url: String) : Promise<any> => {
-        setStatus('Sending request to endpoint...')
-        try {
-            const response = await fetch(`/${url}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-            const data = await response.json()
-            if (data.status === 'success') {
-                setStatus('Success: ' + data.output)
-            } else {
-                setStatus('Error: ' + data.message)
-            }
+    const socket = io(URL, {
+      path: '/socket.io/',
+      transports: ['websocket'],
+    });
 
-        } catch (error: any) {
-            setStatus('Network Error: ' + error.message);
-        }
+    const [connected, setConnected] = useState(false);
+
+    function onConnect() {
+        setConnected(true);
+        console.log('connected!')
     }
 
-  return (
-    <div>
-        <button onClick={() => { connect('first_finch_test') }}>
-            <h2>Run Finch Test</h2>
-        </button>
-        <br/>
-        {status}
-        <br/>
-    </div>
-  )
+    function onDisconnect() {
+        setConnected(false);
+        console.log('disconnected!')
+    }
+
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
+    socket.on('error', (err) => {
+        console.log(err)
+    })
+
+    return (
+        <div>
+            <button
+                style={{
+                    backgroundColor: connected ? 'green' : 'red'
+                }}
+                onClick={() => {
+                    socket.emit('finch_test');
+                }}
+            >
+                <h2>Run Finch Test</h2>
+            </button>
+            <br />
+            { connected ? 'connected' : 'not connected' }
+            <br />
+        </div>
+    );
 }
 
-export default App
+export default App;
