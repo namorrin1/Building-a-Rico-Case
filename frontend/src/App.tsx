@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { io } from 'socket.io-client';
 import './App.css';
 
-const TOTALLY_SECURE_KEY: string = 'meow';
+//const TOTALLY_SECURE_KEY: string = 'meow';
 const PORT: number = 5555;
 const URL: string = 'http://localhost:' + String(PORT);
 
