@@ -3,3 +3,4 @@
 *__MAC*
 node_modules
 coverage
+__pycache__
