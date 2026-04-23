@@ -3,15 +3,51 @@ import keyboard
 import threading 
 import time
 import keyboard
+from flask import Flask
+from flask_socketio import SocketIO
+from lib.BirdBrain import Finch
+TOTALLY_SECURE_KEY = 'meow'
+PORT = 5555
+#Rafael Herrera : March 21 
+# 1. To handle our button presses and to call our functions
+# So what needs to happen is 
+
+
+socketio = SocketIO(cors_allowed_origins='*', transport=['websocket'], ping_interval=3)
+
+def configure():
+    app = Flask(__name__)
+    app.config['SECRET_KEY'] = TOTALLY_SECURE_KEY
+    socketio.init_app(app)
+    return app
+
+@socketio.on('connect')
+def test_connect():
+    socketio.emit('connected?')
+
+@socketio.on('disconnect')
+def test_disconnect():
+    socketio.emit('disconnected?')
+
+@socketio.on('finch_test')
+def finch_test():
+    finch = Finch('A')
+    finch.setMove('F', 100, 100)
+    finch.setTurn('R', 360, 30)
+
+if __name__ == '__main__':
+    app = configure()
+    socketio.run(app, port=PORT)
+
 finch = Finch('A')
 #finch.setMove('F', 10, 100)
 #finch.setTurn('R', 360, 30)
 
 def main():
     print("Hello. Welcome to the Rico Case: \n")
-    coreLoop() 
+    coreLoop()
 
-def coreLoop():
+def coreLoop(): #coreloop stays 
     toggle = True
     while(toggle):
         choice = input(
@@ -173,7 +209,7 @@ def write(userStr):
         finch.print(userStr)
 def makeSquare(length):
     i = 0
-    while(i <4):
+    while(i < 4):
         finch.setMove('F',length, 75)
         finch.setTurn('R', 90, 75)
         i +=1
