@@ -1,18 +1,8 @@
 import { useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 import Button from '@mui/material/Button'
-import ButtonGroup from '@mui/material/ButtonGroup'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack' 
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
-import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AlarmIcon from '@mui/icons-material/Alarm';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import './App.css'
 
 //const TOTALLY_SECURE_KEY: string = 'meow'
@@ -63,20 +53,35 @@ function App() {
             </div>
         </div>
         <div> 
-            <ButtonGroup variant="contained" aria-label="Basic button group">
-                <Button><ArrowBackIcon></ArrowBackIcon></Button>
-                <Button><ArrowDownwardIcon></ArrowDownwardIcon></Button>
-                <Button><ArrowForwardIcon></ArrowForwardIcon></Button>
-                <Button><ArrowUpwardIcon></ArrowUpwardIcon></Button>
-                </ButtonGroup>
+            <Button 
+                onClick={() => 
+                    socket.emit('move')
+            }>
+                Move
+            </Button>
         </div>
         <div id="roombabutton"> 
-            <Button>Roomba</Button>
+            <Button
+                onClick={() => 
+                    socket.emit('roomba')
+                }>
+                Roomba</Button>
         </div>
         <div id="songbuttons">
-            <Button>Mary Had A Little Lamb</Button>
-            <Button>Twinkle Twinkle Little Star</Button>
-            <Button>Oh When The Saints Come Marching In</Button> 
+            <Button
+                onClick={() => 
+                    socket.emit('songhandler','mary')
+                }
+            >Mary Had A Little Lamb</Button>
+            <Button 
+                onClick={() => 
+                    socket.emit('songhandler','twinkle')
+                }>Twinkle Twinkle Little Star</Button>
+            <Button
+                onClick={() => 
+                    socket.emit('songhandler','saints')
+                }
+            >Oh When The Saints Come Marching In</Button> 
         </div>
         <div id="message"> 
                 <Box
