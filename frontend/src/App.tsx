@@ -10,16 +10,18 @@ const PORT: number = 5555
 const URL: string = 'http://localhost:' + String(PORT)
 const PADDING: string = '25px'
 const BUTTONCOLOR = '#7ce4be'
+
 const BUTTONOUTLINE = '#3ada9f'
 const socket = io(URL, {
       path: '/socket.io/',
       transports: ['websocket'],
     })
 
+
 function App() {
     const [connected, setConnected] = useState(false)
     const [on , setOn] = useState(false)
-    const [drawSize, setDrawSize] = useState(100)
+    const [drawSize, setDrawSize] = useState(10)
     const [message, setMessage] = useState('')
     const [roombaOn, setRoombaOn] = useState(false)
     useEffect(() => {
@@ -97,11 +99,11 @@ function App() {
                 sx ={{
                     backgroundColor: BUTTONCOLOR,
                     color: '#ffffff',
-                    '&:hover': {backgroundColor: '#3ada9f', border: '1px solid black' },
+                    '&:hover': {backgroundColor: BUTTONOUTLINE, border: '1px solid black' },
                     width: '150px',
                     height: '50px',
                     fontSize: '16px',
-                    border: '1px solid #3ada9f',
+                    border: '1px solid BUTTONOUTLINE',
                     
                 
                 }}
@@ -120,7 +122,7 @@ function App() {
                 sx={{
                     backgroundColor: roombaOn ? BUTTONOUTLINE : BUTTONCOLOR,
                     color: '#ffffff',
-                    '&:hover': {backgroundColor: '#3ada9f' },
+                    '&:hover': {backgroundColor: BUTTONOUTLINE, border: '1px solid black' },
                     width: '150px',
                     height: '50px',
                     fontSize: '16px',
@@ -137,10 +139,11 @@ function App() {
         {/*wrapping songbuttons like the other two */}
         <div id="songbuttons" style={{display: 'flex', gap: '16px', padding: PADDING, justifyContent:'center'}}>
             <Button
+                variant='outlined'
                 sx={{
-                    backgroundColor: '#7ce4be',
+                    backgroundColor: BUTTONCOLOR,
                     color: 'white',
-                    '&:hover': {backgroundColor: '#3ada9f' },
+                    '&:hover': {backgroundColor: BUTTONOUTLINE, border: '1px solid black'},
                     width: '180px',
                     height: '70px',
                     fontSize: '12px',
@@ -150,10 +153,11 @@ function App() {
                 }
             >Mary Had A Little Lamb</Button>
             <Button 
+                variant='outlined'
                 sx={{
-                    backgroundColor: '#7ce4be',
+                    backgroundColor: BUTTONCOLOR,
                     color: '#ffffff',
-                    '&:hover': {backgroundColor: '#3ada9f' },
+                    '&:hover': {backgroundColor: BUTTONOUTLINE, border: '1px solid black',  },
                     width: '180px',
                     height: '70px',
                     fontSize: '12px',
@@ -162,10 +166,11 @@ function App() {
                     socket.emit('songhandler','twinkle')
                 }>Twinkle Twinkle Little Star</Button>
             <Button
-            sx={{
-                    backgroundColor: '#7ce4be',
+                variant='outlined'
+                sx={{
+                    backgroundColor: BUTTONCOLOR,
                     color: '#ffffff',
-                    '&:hover': {backgroundColor: '#3ada9f' },
+                    '&:hover': {backgroundColor: BUTTONOUTLINE, border: '1 px solid black' },
                     width: '180px',
                     height: '70px',
                     fontSize: '12px',
@@ -184,9 +189,12 @@ function App() {
                 sx={{width:'80px', 
                     
                     '& .MuiOutlinedInput-root': {
-                        backgroundColor: '#7ce4be',
+                        backgroundColor: BUTTONCOLOR,
                         height: '50px',
                         alignItems: 'center',
+                        '&:hover': {
+                            backgroundColor: BUTTONOUTLINE,
+                        }
                     },
                     '& .MuiInputLabel-root': {
                         color: '#ffffff',
@@ -195,19 +203,22 @@ function App() {
                         color: '#ffffff',
                     },
                     '& .MuiOutlinedInput-notchedOutline': {
-                        border: '1px solid #3ada9f'
+                        border: '1px solid ${BUTTONOUTLINE}'
                     },
                     '&:hover .MuiOutlinedInput-notchedOutline': {
+                
                         border: '1px solid black'
                     },
 
                 }}
             />
             <Button
+                variant='outlined'
                 sx={{
-                    backgroundColor: '#7ce4be',
+                    backgroundColor: BUTTONCOLOR
+                    ,
                     color:'#ffffff',
-                    '&:hover': {backgroundColor: '#3ada9f'},
+                    '&:hover': {backgroundColor: BUTTONOUTLINE, border: '1px solid black'},
                     width: '120px',
                     height: '50px',
                     fontSize: '12px',
@@ -217,10 +228,12 @@ function App() {
             >Square</Button>
 
             <Button
+                variant='outlined'
                 sx={{
-                    backgroundColor: '#7ce4be',
+                    backgroundColor: BUTTONCOLOR
+                    ,
                     color:'#ffffff',
-                    '&:hover': {backgroundColor: '#3ada9f'},
+                    '&:hover': {backgroundColor: BUTTONOUTLINE, border: '1px solid black'},
                     width: '120px',
                     height: '50px',
                     fontSize: '12px',
@@ -230,10 +243,12 @@ function App() {
             >Hexagon</Button>
 
             <Button
+                variant='outlined'
                 sx={{
-                    backgroundColor: '#7ce4be',
+                    backgroundColor: BUTTONCOLOR
+                    ,
                     color:'#ffffff',
-                    '&:hover': {backgroundColor: '#3ada9f'},
+                    '&:hover': {backgroundColor: BUTTONOUTLINE, border: '1px solid black'},
                     width: '120px',
                     height: '50px',
                     fontSize: '12px',
@@ -249,17 +264,33 @@ function App() {
                 onChange={(e) => setMessage(e.target.value)}
                 sx={{
                     width: '180px',
-                    '& .MuiOutlinedInput-root': {backgroundColor: '#7ce4be', height: '70px'},
+                    '& .MuiOutlinedInput-root': {
+                        backgroundColor: BUTTONCOLOR,
+                        height: '70px'},
+                        '&:hover': {
+                            backgroundColor: BUTTONOUTLINE,
+                        },
+                    
                     '& .MuiInputLabel-root': {color: '#ffffff'},
                     '& .MuiOutlinedInput-input': {color: '#ffffff'},
+                    '& .MuiOutlinedInput-notchedOutline': {
+                        border: '1px solid ${BUTTONOUTLINE}',
+                    },
+                    
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                        border: '1px solid black',
+                    },
+                    
 
                 }}
             />
             <Button
+            variant='outlined'
                 sx={{
-                    backgroundColor: '#7ce4be',
+                    backgroundColor: BUTTONCOLOR
+                    ,
                     color: '#ffffff',
-                    '&:hover':{ backgroundColor: '#3ada9f'},
+                    '&:hover':{ backgroundColor: BUTTONOUTLINE, border: '1px solid black'},
                     width:'180px',
                     height: '70px',
                     fontSize: '14px',
