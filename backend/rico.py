@@ -1,5 +1,5 @@
 from lib.BirdBrain import Finch
-#import keyboard
+import keyboard
 import threading 
 import time
 from flask import Flask
@@ -11,6 +11,24 @@ finch = Finch('A')
 #Rafael Herrera : March 21 
 # 1. To handle our button presses and to call our functions
 # So what needs to happen is 
+C = 60
+D = 62
+E = 64
+F = 65
+G = 67
+A = 69
+FULL_REST = 1
+SIXTH_REST = 0.6
+HALF_REST = 0.5
+LONG_REST = 1.5
+FULL_NOTE = 1
+EIGHTH_NOTE = 0.8    
+HALF_NOTE = 0.5
+SHORT_NOTE = 0.45
+LONG_NOTE = 0.75
+
+
+
 socketio = SocketIO(cors_allowed_origins='*', transport=['websocket'], ping_interval=3)
 
 def configure():
@@ -18,32 +36,7 @@ def configure():
     app.config['SECRET_KEY'] = TOTALLY_SECURE_KEY
     socketio.init_app(app)
     return app
-def write(userStr):
-    #str = "Hello World"
-    if (len(userStr) > 15):
-        finch.print("Too Long!")
-    elif (len(userStr)< 1):
-        finch.print("Too Short!") #wont ever happen 
-    else:
-        finch.print(userStr)
-def makeSquare(length):
-    i = 0
-    while(i < 4):
-        finch.setMove('F',length, 75)
-        finch.setTurn('R', 90, 75)
-        i +=1
-def makeStar(length):
-    i = 0
-    while (i < 5):  
-        finch.setMove('F', length, 75)
-        finch.setTurn('R',144, 75)
-        i+=1
-def makeHex(length):
-    i = 0
-    while(i < 6):
-        finch.setMove('F', length, 75)
-        finch.setTurn('R', 65, 75)
-        i+=1 
+
 @socketio.on('connect')
 def test_connect():
     socketio.emit('connected?')
@@ -58,43 +51,55 @@ def finch_test():
     finch.setTurn('R', 360, 30)
 
 @socketio.on('move')
-def move(data) : 
-    direction = data.get('direction')
-    speed = 30
-    if direction == 'forward': 
-        finch.setMotors(speed,speed)
-    elif direction == 'backward': 
-        finch.setMotors(-speed,-speed)
-    elif direction == 'left':
-        finch.setMotors(-speed/2,speed)
-    elif direction == 'right':
-        finch.setMotors(speed,-speed/2)
-    elif direction == 'stop':
+def move() : 
+    #this is so that the keys pressed for movement control do not echo in the cmd line after exiting
+    keyboard.block_key('w')
+    keyboard.block_key('a')
+    keyboard.block_key('s')
+    keyboard.block_key('d')
+    keyboard.block_key('space')
+    keyboard.block_key('q')
+
+    control = True # a state to hold whether or not controls are on or off
+    togPres = False # a state to determine whether or not the toggle has been pressed(will be space)
+    try:    
+        while True :
+            if keyboard.is_pressed("q"):
+                finch.setMotors(0,0)
+                print("Exiting Manual Movement Control")
+                break 
+            if keyboard.is_pressed("space") and not togPres :
+                    control = not control #control is off
+                    togPres = True #toggle was pressed
+                    if not control : 
+                        finch.setMotors(0,0) #if control is off then finch should not move
+            if not keyboard.is_pressed("space") : 
+                togPres = False 
+                if control : 
+                    if keyboard.is_pressed("w") : #move forward 
+                        finch.setMotors(0,0)
+                        time.sleep(0.10)   
+                        finch.setMotors(25,25)
+                    elif keyboard.is_pressed("s") : #back
+                        finch.setMotors(0,0)
+                        time.sleep(0.10)
+                        finch.setMotors(-25,-25) 
+                    elif keyboard.is_pressed("a") : #left
+                        finch.setMotors(-30,30)
+                    elif keyboard.is_pressed("d"): 
+                        finch.setMotors(30,-30) # right
+                else : 
+                    finch.setMotors(0,0) # stops if no input is being handled
+                
+            time.sleep(0.05) # use sleep to not overload bot.
+    finally:    #unblocks the keys after blocking them so they dont echo in the cmd line. 
+        for key in ['w', 'a', 's', 'd', 'space', 'q']:
+            try:
+                keyboard.unblock_key(key)
+            except:
+                pass
         finch.setMotors(0,0)
-status = {'active': False} 
-@socketio.on('roomba')
-def roomba():
-    if status['active']:
-        status['active'] = False
-        return
-    
-    status['active'] = True
-    def drive():
-        #this runs in the background thread 
-        while status['active']:
-            distance = finch.getDistance()
-            if distance > 15: 
-                finch.setMotors( 15, 15)
-            else:
-                finch.stop() 
-                finch.setTurn('L', 90, 50)
-            time.sleep(0.05) #this was recommended so the loop doesn't overwork the CPU
         finch.stop()
-    #background thread
-    mover = threading.Thread(target=drive)
-    mover.daemon = True
-    mover.start()
-'''
 @socketio.on('roomba')
 def roomba():
     status = {'active' : True}
@@ -121,245 +126,239 @@ def roomba():
             break
     mover.join()
     print("Roomba Mode Ended")
-'''
-@socketio.on('songhandler') 
-#temp is used to pass a parameter I have no idea why the hell it needs it.
-#So we use temp as a dummy parameter
-def singMary(temp):
-    finch.playNote(64, 0.45)
-    time.sleep(0.5)
-    finch.playNote(62, 0.45)
-    time.sleep(0.5)
-    finch.playNote(60, 0.45)
-    time.sleep(0.5)
-    finch.playNote(62, 0.45)
-    time.sleep(0.5)
-    finch.playNote(64, 0.45)
-    time.sleep(0.5)
-    finch.playNote(64, 0.45)
-    time.sleep(0.5)
-    finch.playNote(64, 0.45)
-    time.sleep(1.0)
-    finch.playNote(62, 0.45)
-    time.sleep(0.5)
-    finch.playNote(62, 0.45)
-    time.sleep(0.5)
-    finch.playNote(62, 0.45)
-    time.sleep(1.0)
-    finch.playNote(64, 0.45)
-    time.sleep(0.5)
-    finch.playNote(67, 0.45)
-    time.sleep(0.5)
-    finch.playNote(67, 0.45)
-    time.sleep(1.0)
-    finch.playNote(64, 0.45)
-    time.sleep(0.5)
-    finch.playNote(62, 0.45)
-    time.sleep(0.5)
-    finch.playNote(60, 0.45)
-    time.sleep(0.5)
-    finch.playNote(62, 0.45)
-    time.sleep(0.5)
-    finch.playNote(64, 0.45)
-    time.sleep(0.5)
-    finch.playNote(64, 0.45)
-    time.sleep(0.5)
-    finch.playNote(64, 0.45)
-    time.sleep(0.5)
-    finch.playNote(64, 0.45)
-    time.sleep(0.5)
-    finch.playNote(62, 0.45)
-    time.sleep(0.5)
-    finch.playNote(62, 0.45)
-    time.sleep(0.5)
-    finch.playNote(64, 0.45)
-    time.sleep(0.5)
-    finch.playNote(62, 0.45)
-    time.sleep(0.5)
-    finch.playNote(60, 0.75)
-def singSaints(temp):   
-    # Phrase 1
-    finch.playNote(60, 0.50)
-    time.sleep(0.5)
-    finch.playNote(64, 0.50)
-    time.sleep(0.5)
-    finch.playNote(65, 0.50)
-    time.sleep(0.5)
-    finch.playNote(67, .8)
-    time.sleep(1)
-    finch.playNote(60, 0.50)
-    time.sleep(0.5)
-    finch.playNote(64, 0.50)
-    time.sleep(0.5)
-    finch.playNote(65, 0.50)
-    time.sleep(0.5)
-    finch.playNote(67, 0.80)
-    time.sleep(1)
-    # Phrase 2
-    finch.playNote(60, 0.50)
-    time.sleep(0.5)
-    finch.playNote(64, 0.50)
-    time.sleep(0.5)
-    finch.playNote(65, 0.50)
-    time.sleep(0.5)
-    finch.playNote(67, 0.8)
-    time.sleep(1)
-    finch.playNote(64, 0.8)
-    time.sleep(1)
-    finch.playNote(60, 0.8)
-    time.sleep(1)
-    finch.playNote(64, 0.8)
-    time.sleep(1)
-    finch.playNote(62, 0.8)
-    time.sleep(1.5)
-    # Phrase 3
-    finch.playNote(64, 0.5)
-    time.sleep(0.6)
-    finch.playNote(64, 0.5)
-    time.sleep(0.5)
-    finch.playNote(62, 0.5)
-    time.sleep(0.5)
-    finch.playNote(60, .8)
-    time.sleep(1)
-    finch.playNote(60, 0.5)
-    time.sleep(0.5)
-    finch.playNote(64, 0.8)
-    time.sleep(1)
-    finch.playNote(67, 0.5)
-    time.sleep(0.6)
-    finch.playNote(67, 0.5)
-    time.sleep(0.5)
-    finch.playNote(65, 0.8)
-    time.sleep(1)
-    # Phrase 4
-    finch.playNote(60, 0.5)
-    time.sleep(0.5)
-    finch.playNote(64, 0.5)
-    time.sleep(0.5)
-    finch.playNote(65, 0.5)
-    time.sleep(0.5)
-    finch.playNote(67, 0.8)
-    time.sleep(1)
-    finch.playNote(64, 0.8)
-    time.sleep(1)
-    finch.playNote(60, 0.8)
-    time.sleep(1)
-    finch.playNote(62, 0.8)
-    time.sleep(1)
-    finch.playNote(60, 1)
-    time.sleep(1)
-def singTwinkle(temp):
-    finch.playNote(60, 0.5)
-    time.sleep(.6)
-    finch.playNote(60, 0.5)
-    time.sleep(.5)
-    finch.playNote(67, 0.5)
-    time.sleep(.6)
-    finch.playNote(67, 0.5)
-    time.sleep(.5)
-    finch.playNote(69, 0.5)
-    time.sleep(.6)
-    finch.playNote(69, 0.5)
-    time.sleep(.5)
-    finch.playNote(67, 0.8)
-    time.sleep(1)
-    finch.playNote(65, 0.5)
-    time.sleep(.6)
-    finch.playNote(65, 0.5)
-    time.sleep(.5)
-    finch.playNote(64, 0.5)
-    time.sleep(.6)
-    finch.playNote(64, 0.5)
-    time.sleep(.5)
-    finch.playNote(62, 0.5)
-    time.sleep(.6)
-    finch.playNote(62, 0.5)
-    time.sleep(.5)
-    finch.playNote(60, 0.8)
-    time.sleep(1)
-    finch.playNote(67, 0.5)
-    time.sleep(.6)
-    finch.playNote(67, 0.5)
-    time.sleep(.5)
-    finch.playNote(65, 0.5)
-    time.sleep(.6)
-    finch.playNote(65, 0.5)
-    time.sleep(.5)
-    finch.playNote(64, 0.5)
-    time.sleep(.6)
-    finch.playNote(64, 0.5)
-    time.sleep(.5)
-    finch.playNote(62, 0.8)
-    time.sleep(1)
-    finch.playNote(67, 0.5)
-    time.sleep(.6)
-    finch.playNote(67, 0.5)
-    time.sleep(.5)
-    finch.playNote(65, 0.5)
-    time.sleep(.6)
-    finch.playNote(65, 0.5)
-    time.sleep(.5)
-    finch.playNote(64, 0.5)
-    time.sleep(.6)
-    finch.playNote(64, 0.5)
-    time.sleep(.5)
-    finch.playNote(62, 0.8)
-    time.sleep(1)
-    finch.playNote(60, 0.5)
-    time.sleep(.6)
-    finch.playNote(60, 0.5)
-    time.sleep(.5)
-    finch.playNote(67, 0.5)
-    time.sleep(.6)
-    finch.playNote(67, 0.5)
-    time.sleep(.5)
-    finch.playNote(69, 0.5)
-    time.sleep(.6)
-    finch.playNote(69, 0.5)
-    time.sleep(.5)
-    finch.playNote(67, 0.8)
-    time.sleep(1)
-    finch.playNote(65, 0.5)
-    time.sleep(.6)
-    finch.playNote(65, 0.5)
-    time.sleep(.5)
-    finch.playNote(64, 0.5)
-    time.sleep(.6)
-    finch.playNote(64, 0.5)
-    time.sleep(.5)
-    finch.playNote(62, 0.5)
-    time.sleep(.6)
-    finch.playNote(62, 0.5)
-    time.sleep(.5)
-    finch.playNote(60, 1)
-    time.sleep(1)
-def songhandler(songname) : 
-    if songname == 'mary' : 
-        print("Im at before mary")
-        singMary()
-        print("Im at after mary")
-    elif songname == 'saints' :
-        singSaints("")
-    elif songname == 'twinkle':  
-        singTwinkle() 
-    else : 
-        print("ERROR")
-@socketio.on('draw')
-def drawhandler(size,shape) :
-    if shape == 'SQUARE' :
-        makeSquare(size)
-    elif shape == 'HEXAGON' : 
-        makeHex(size)
-    elif shape == 'STAR' : 
-        makeStar(size)
-    else : 
-        print("ERROR")
-@socketio.on('write') 
-def messagehandler(message) : 
-    write(message)
-if __name__ == '__main__':
-    app = configure()
-    socketio.run(app, port=PORT)
+def write(userStr):
+    #str = "Hello World"
+    if (len(userStr) > 15):
+        finch.print("Too Long!")
+    elif (len(userStr)< 1):
+        finch.print("Too Short!") #wont ever happen 
+    else:
+        finch.print(userStr)
+def makeSquare(length):
+    i = 0
+    while(i < 4):
+        finch.setMove('F',length, 75)
+        finch.setTurn('R', 90, 75)
+        i +=1
+def makeStar(length):
+    i = 0
+    while (i < 5):  
+        finch.setMove('F', length, 75)
+        finch.setTurn('R',144, 75)
+        i+=1
+def makeHex(length):
+    i = 0
+    while(i < 6):
+        finch.setMove('F', length, 75)
+        finch.setTurn('R', 65, 75)
+        i+=1
+
+def singMary():
+    finch.playNote(E, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(D, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(C, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(D, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, SHORT_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(D, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(D, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(D, SHORT_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(E, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(G, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(G, SHORT_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(E, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(D, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(C, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(D, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(D, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(D, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(D, SHORT_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(C, LONG_NOTE)  
+
+def singSaints():   
+    finch.playNote(C, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(F, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(G, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(C, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(F, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(G, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(C, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(F, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(G, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(E, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(C, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(E, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(D, EIGHTH_NOTE)
+    time.sleep(LONG_NOTE)
+    finch.playNote(E, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(E, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(D, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(C, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(C, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(G, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(G, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(F, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(C, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(F, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(G, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(E, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(C, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(D, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(C, FULL_NOTE)
+    time.sleep(FULL_REST)
+
+def singTwinkle():
+    finch.playNote(C, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(C, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(G, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(G, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(A, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(A, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(G, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(F, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(F, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(E, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(D, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(D, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(C, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(G, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(G, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(F, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(F, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(E, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(D, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(G, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(G, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(F, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(F, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(E, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(D, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(C, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(C, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(G, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(G, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(A, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(A, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(G, EIGHTH_NOTE)
+    time.sleep(FULL_REST)
+    finch.playNote(F, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(F, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(E, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(E, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(D, HALF_NOTE)
+    time.sleep(SIXTH_REST)
+    finch.playNote(D, HALF_NOTE)
+    time.sleep(HALF_REST)
+    finch.playNote(C, FULL_NOTE)
+    time.sleep(FULL_REST)
 
 finch = Finch('A')
 #finch.setMove('F', 10, 100)
@@ -447,15 +446,9 @@ def songMode(songChoice):
     elif songChoice.upper() == 'TWINKLE':
         singTwinkle()
 
-#rafbranch ^'
-status = {'active': False} 
-@socketio.on('roomba')
+#rafbranch ^ 
 def roomba():
-    if status['active']:
-        status['active'] = False
-        return
-    
-    status['active'] = True
+    status = {'active' : True}
     def drive():
         #this runs in the background thread 
         while status['active']:
@@ -471,7 +464,7 @@ def roomba():
     mover = threading.Thread(target=drive)
     mover.daemon = True
     mover.start()
-'''
+
     while True: 
         stopCommand = input("Type 'STOP' to end roomba mode: \n").upper()
         if stopCommand == 'STOP':
@@ -479,8 +472,6 @@ def roomba():
             break
     mover.join()
     print("Roomba Mode Ended")
-'''
-'''
 def write(userStr):
     #str = "Hello World"
     if (len(userStr) > 15):
@@ -507,6 +498,5 @@ def makeHex(length):
         finch.setMove('F', length, 75)
         finch.setTurn('R', 65, 75)
         i+=1 
-'''
 main()
 
