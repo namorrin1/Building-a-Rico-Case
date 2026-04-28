@@ -9,15 +9,13 @@ import './App.css'
 const PORT: number = 5555
 const URL: string = 'http://localhost:' + String(PORT)
 const PADDING: string = '25px'
-
-function App() {
-
-    const socket = io(URL, {
+const socket = io(URL, {
       path: '/socket.io/',
       transports: ['websocket'],
     })
-
+function App() {
     const [connected, setConnected] = useState(false)
+    const [on , setOn] = useState(false)
     useEffect(() => {
 
     function onConnect() {
@@ -35,7 +33,32 @@ function App() {
     socket.on('error', (err) => {
         console.log(err)
     })
-    })
+    const keydown = (e: KeyboardEvent) => {
+        if(!on) return
+        let direction = ''; 
+        if(e.key === 'w') direction = 'forward';
+        else if (e.key === 's')
+            direction = 'backward';
+        else if (e.key === 'a')
+            direction = 'left';
+        else if (e.key === 'd')
+            direction = 'right';
+        if (direction) {
+            socket.emit('move', {direction});
+        }
+    }; 
+    const keyup = () => {
+        if (!on) return 
+        socket.emit('move', {direction: 'stop'});
+    }; 
+    window.addEventListener('keydown', keydown);
+    window.addEventListener('keyup', keyup);
+
+    return () => {
+        window.removeEventListener('keydown', keydown);
+        window.removeEventListener('keyup', keyup);
+    }; 
+    }, [on])
     return (
         <>
         <div style={{ padding: PADDING }} >
@@ -53,10 +76,13 @@ function App() {
             </div>
         </div>
         <div> 
-            <Button 
-                onClick={() => 
-                    socket.emit('move')
-            }>
+            <Button
+                onClick={() => {
+                    if (on) {
+                        socket.emit('move', {direction: 'stop'})
+                    }
+                    setOn(!on)
+                }}>
                 Move
             </Button>
         </div>
