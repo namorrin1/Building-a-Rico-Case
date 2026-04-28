@@ -1,5 +1,5 @@
 from lib.BirdBrain import Finch
-import keyboard
+#import keyboard
 import threading 
 import time
 from flask import Flask
@@ -18,7 +18,32 @@ def configure():
     app.config['SECRET_KEY'] = TOTALLY_SECURE_KEY
     socketio.init_app(app)
     return app
-
+def write(userStr):
+    #str = "Hello World"
+    if (len(userStr) > 15):
+        finch.print("Too Long!")
+    elif (len(userStr)< 1):
+        finch.print("Too Short!") #wont ever happen 
+    else:
+        finch.print(userStr)
+def makeSquare(length):
+    i = 0
+    while(i < 4):
+        finch.setMove('F',length, 75)
+        finch.setTurn('R', 90, 75)
+        i +=1
+def makeStar(length):
+    i = 0
+    while (i < 5):  
+        finch.setMove('F', length, 75)
+        finch.setTurn('R',144, 75)
+        i+=1
+def makeHex(length):
+    i = 0
+    while(i < 6):
+        finch.setMove('F', length, 75)
+        finch.setTurn('R', 65, 75)
+        i+=1 
 @socketio.on('connect')
 def test_connect():
     socketio.emit('connected?')
@@ -46,6 +71,30 @@ def move(data) :
         finch.setMotors(speed,-speed/2)
     elif direction == 'stop':
         finch.setMotors(0,0)
+status = {'active': False} 
+@socketio.on('roomba')
+def roomba():
+    if status['active']:
+        status['active'] = False
+        return
+    
+    status['active'] = True
+    def drive():
+        #this runs in the background thread 
+        while status['active']:
+            distance = finch.getDistance()
+            if distance > 15: 
+                finch.setMotors( 15, 15)
+            else:
+                finch.stop() 
+                finch.setTurn('L', 90, 50)
+            time.sleep(0.05) #this was recommended so the loop doesn't overwork the CPU
+        finch.stop()
+    #background thread
+    mover = threading.Thread(target=drive)
+    mover.daemon = True
+    mover.start()
+'''
 @socketio.on('roomba')
 def roomba():
     status = {'active' : True}
@@ -72,6 +121,7 @@ def roomba():
             break
     mover.join()
     print("Roomba Mode Ended")
+'''
 @socketio.on('songhandler') 
 #temp is used to pass a parameter I have no idea why the hell it needs it.
 #So we use temp as a dummy parameter
@@ -397,9 +447,15 @@ def songMode(songChoice):
     elif songChoice.upper() == 'TWINKLE':
         singTwinkle()
 
-#rafbranch ^ 
+#rafbranch ^'
+status = {'active': False} 
+@socketio.on('roomba')
 def roomba():
-    status = {'active' : True}
+    if status['active']:
+        status['active'] = False
+        return
+    
+    status['active'] = True
     def drive():
         #this runs in the background thread 
         while status['active']:
@@ -415,7 +471,7 @@ def roomba():
     mover = threading.Thread(target=drive)
     mover.daemon = True
     mover.start()
-
+'''
     while True: 
         stopCommand = input("Type 'STOP' to end roomba mode: \n").upper()
         if stopCommand == 'STOP':
@@ -423,6 +479,8 @@ def roomba():
             break
     mover.join()
     print("Roomba Mode Ended")
+'''
+'''
 def write(userStr):
     #str = "Hello World"
     if (len(userStr) > 15):
@@ -449,5 +507,6 @@ def makeHex(length):
         finch.setMove('F', length, 75)
         finch.setTurn('R', 65, 75)
         i+=1 
+'''
 main()
 

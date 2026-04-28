@@ -9,6 +9,8 @@ import './App.css'
 const PORT: number = 5555
 const URL: string = 'http://localhost:' + String(PORT)
 const PADDING: string = '25px'
+const BUTTONCOLOR = '#7ce4be'
+const BUTTONOUTLINE = '#3ada9f'
 const socket = io(URL, {
       path: '/socket.io/',
       transports: ['websocket'],
@@ -19,6 +21,7 @@ function App() {
     const [on , setOn] = useState(false)
     const [drawSize, setDrawSize] = useState(100)
     const [message, setMessage] = useState('')
+    const [roombaOn, setRoombaOn] = useState(false)
     useEffect(() => {
 
     function onConnect() {
@@ -64,7 +67,16 @@ function App() {
     }, [on])
     return (
         <>
-        <div style={{ padding: PADDING }} >
+        <div style={{
+            backgroundColor: BUTTONCOLOR,
+            borderBottom: '2px solid ${BUTTONOUTLINE}',
+            padding: '16px',
+            width: '100%',
+            boxSizing: 'border-box',
+        }}>
+            <h1 style={{textAlign: 'center', color: '#ffffff' }}>RICO</h1>
+        </div>
+        {/*<div style={{ padding: PADDING }} >
             <Button
                 variant='contained'
                 color = { connected ? 'success' : 'error' }
@@ -77,13 +89,13 @@ function App() {
             <div style={{padding: PADDING}} >
             { connected ? 'connected' : 'not connected' }
             </div>
-        </div>
+        </div> */}
        {/* wrapping buttons in this flex div */}
         <div style ={{ display: 'flex', gap: '16px', padding: PADDING, justifyContent: 'center' }}> 
             <Button
                 variant ='outlined'
                 sx ={{
-                    backgroundColor: '#7ce4be',
+                    backgroundColor: BUTTONCOLOR,
                     color: '#ffffff',
                     '&:hover': {backgroundColor: '#3ada9f', border: '1px solid black' },
                     width: '150px',
@@ -104,18 +116,22 @@ function App() {
             </Button>
         
             <Button
+                variant='outlined'
                 sx={{
-                    backgroundColor: '#7ce4be',
+                    backgroundColor: roombaOn ? BUTTONOUTLINE : BUTTONCOLOR,
                     color: '#ffffff',
                     '&:hover': {backgroundColor: '#3ada9f' },
                     width: '150px',
                     height: '50px',
                     fontSize: '16px',
+                    border: '1px solid BUTTONOUTLINE',
                 }}
-                onClick={() => 
+                onClick={() => {
                     socket.emit('roomba')
-                }>
-                Roomba
+                    setRoombaOn(!roombaOn)
+                }}
+            >
+                {roombaOn ? 'Stop Roomba' : 'Roomba'}
             </Button>
         </div>
         {/*wrapping songbuttons like the other two */}
