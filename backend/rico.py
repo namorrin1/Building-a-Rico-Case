@@ -33,55 +33,19 @@ def finch_test():
     finch.setTurn('R', 360, 30)
 
 @socketio.on('move')
-def move() : 
-    #this is so that the keys pressed for movement control do not echo in the cmd line after exiting
-    keyboard.block_key('w')
-    keyboard.block_key('a')
-    keyboard.block_key('s')
-    keyboard.block_key('d')
-    keyboard.block_key('space')
-    keyboard.block_key('q')
-
-    control = True # a state to hold whether or not controls are on or off
-    togPres = False # a state to determine whether or not the toggle has been pressed(will be space)
-    try:    
-        while True :
-            if keyboard.is_pressed("q"):
-                finch.setMotors(0,0)
-                print("Exiting Manual Movement Control")
-                break 
-            if keyboard.is_pressed("space") and not togPres :
-                    control = not control #control is off
-                    togPres = True #toggle was pressed
-                    if not control : 
-                        finch.setMotors(0,0) #if control is off then finch should not move
-            if not keyboard.is_pressed("space") : 
-                togPres = False 
-                if control : 
-                    if keyboard.is_pressed("w") : #move forward 
-                        finch.setMotors(0,0)
-                        time.sleep(0.10)   
-                        finch.setMotors(25,25)
-                    elif keyboard.is_pressed("s") : #back
-                        finch.setMotors(0,0)
-                        time.sleep(0.10)
-                        finch.setMotors(-25,-25) 
-                    elif keyboard.is_pressed("a") : #left
-                        finch.setMotors(-30,30)
-                    elif keyboard.is_pressed("d"): 
-                        finch.setMotors(30,-30) # right
-                else : 
-                    finch.setMotors(0,0) # stops if no input is being handled
-                
-            time.sleep(0.05) # use sleep to not overload bot.
-    finally:    #unblocks the keys after blocking them so they dont echo in the cmd line. 
-        for key in ['w', 'a', 's', 'd', 'space', 'q']:
-            try:
-                keyboard.unblock_key(key)
-            except:
-                pass
+def move(data) : 
+    direction = data.get('direction')
+    speed = 30
+    if direction == 'forward': 
+        finch.setMotors(speed,speed)
+    elif direction == 'backward': 
+        finch.setMotors(-speed,-speed)
+    elif direction == 'left':
+        finch.setMotors(-speed/2,speed)
+    elif direction == 'right':
+        finch.setMotors(speed,-speed/2)
+    elif direction == 'stop':
         finch.setMotors(0,0)
-        finch.stop()
 @socketio.on('roomba')
 def roomba():
     status = {'active' : True}
